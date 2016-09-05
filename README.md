@@ -2,6 +2,9 @@
 
 ![example](example.gif)
 
+## Demo
+[cfurrow.github.io/phaser-wave-example/](https://cfurrow.github.io/phaser-wave-example/)
+
 ## How to run
 
 1. Clone/download this repository
