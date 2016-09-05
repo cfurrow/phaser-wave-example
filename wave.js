@@ -42,6 +42,7 @@ Wave.Game.prototype = {
     this.boat = this.game.add.sprite(0, 0, 'boat');
     this.game.physics.arcade.enable(this.boat);
     this.boat.body.gravity.y = 250;
+    this.boat.body.setCircle(32);
     this.game.camera.follow(this.boat);
   },
 
