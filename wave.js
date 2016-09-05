@@ -34,8 +34,8 @@ Wave.Game.prototype = {
       wave = this.game.add.sprite(x, y, 'wave', 0);
       wave.anchor.set(0.5,0.5);
       this.waves.add(wave);
-      wave.body.setCircle(80);
-      wave.body.offset.set(0, 40);
+      wave.body.setCircle(this.game.rnd.between(80,140));
+      wave.body.offset.set(0, 50);
       wave.body.immovable = true;
     }
 
