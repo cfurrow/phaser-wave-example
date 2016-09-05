@@ -49,7 +49,7 @@ Wave.Game.prototype = {
   update: function(){
     this.game.physics.arcade.collide(this.boat, this.waves);
     this.count += 0.1;
-    this.boat.body.velocity.x = 50; // Constantly move camera to the right
+    this.boat.body.velocity.x = 90; // Constantly move boat to the right
 
     for (var i = 0; i < this.numWaves; i++)
     {
