@@ -31,7 +31,7 @@ Wave.Game.prototype = {
     {
       x = i*length;
       y = 0;
-      wave = this.game.add.sprite(x, y, 'wave', 0);
+      wave = this.game.add.sprite(x, y, 'wave', this.game.rnd.between(0,1));
       wave.anchor.set(0.5,0.5);
       this.waves.add(wave);
       wave.body.setCircle(this.game.rnd.between(80,140));
