@@ -51,10 +51,12 @@ Wave.Game.prototype = {
     this.count += 0.1;
     this.boat.body.velocity.x = 90; // Constantly move boat to the right
 
-    for (var i = 0; i < this.numWaves; i++)
-    {
-      this.waves.children[i].y = Math.sin(i * 0.9 + this.count) * 10;
-    }
+    this.waves.forEach(function(currentWave){
+      var i = this.waves.getChildIndex(currentWave);
+      var x = i * 0.9 + this.count;
+      var amp = 5;
+      currentWave.y = Math.sin(x) * amp;
+    }, this);
   },
 
   render: function(){
