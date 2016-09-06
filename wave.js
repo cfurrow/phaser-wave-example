@@ -30,7 +30,7 @@ Wave.Game.prototype = {
 
     for (var i = 0; i < this.numWaves; i++)
     {
-      x = i*this.WAVE_LENGTH;
+      x = i*waveLength;
       y = 0;
       wave = this.game.add.sprite(x, y, 'wave', this.game.rnd.between(0,1));
       wave.anchor.set(0.5,0.5);
