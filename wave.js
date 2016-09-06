@@ -3,17 +3,16 @@ Wave.Game = function(game) {};
 
 Wave.Game.prototype = {
   init: function(){
+    this.WAVE_LENGTH = 160;
     this.count = 0;
-    this.waveTotalLength = 1600;
-    this.numWaves = 10;
+    this.numWaves = 6; // Screen is only 800px wide, 6*160 = 960 pixels of coverage.
+    this.waveTotalLength = this.WAVE_LENGTH * this.numWaves;
     this.waves = null;
     this.boat = null;
     this.sky = null;
 
-    this.firstWave = null;
-    this.lastWave = null;
-
-    this.WAVE_LENGTH = 160;
+    this.firstWaveIndex = 0;
+    this.lastWaveIndex = this.numWaves-1;
 
     this.debug = false;
     this.debugKey = null;
@@ -29,7 +28,7 @@ Wave.Game.prototype = {
 
   create: function(){
     var x, y, wave;
-    this.game.world.setBounds(0, 0, 3200, 600);
+    this.game.world.setBounds(0, 0, 10000, 600);
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.time.advancedTiming = true;
 
@@ -65,7 +64,6 @@ Wave.Game.prototype = {
       wave.body.offset.set(0, 50);
       wave.body.immovable = true;
     }
-    this.setFirstLastWave();
 
     this.boat = this.game.add.sprite(0, 0, 'boat');
     this.game.physics.arcade.enable(this.boat);
@@ -74,49 +72,48 @@ Wave.Game.prototype = {
     this.game.camera.follow(this.boat);
   },
 
-  update: function(){
+  update: function() {
     this.game.physics.arcade.collide(this.boat, this.waves);
     this.boat.body.velocity.x = 90; // Constantly move boat to the right
     if(this.debug) {
       this.game.debug.text("Camera "+this.game.camera.x, 0, 10);
     }
-
     this.animateWaves();
     this.fps();
+    this.shuffleLeftMostWave();
   },
 
   fps: function(){
     this.game.debug.text(this.game.time.fps+"fps", 750, 20);
   },
 
-  setFirstLastWave: function() {
-    this.firstWave = this.waves.children[0];
-    this.lastWave  = this.waves.children[this.numWaves-1];
-  },
-
+  // NOTE: this re-shuffle causes stutter. all waves rubber-band a bit on the Y axis when this is done.
   shuffleLeftMostWave: function(){
     // Look at left-most this.waves.children only!
     // check if the current wave's right edge (in world coords) is less than the camera's left edge
-    if((this.firstWave.world.x + this.firstWave.offsetX) < this.game.camera.x) {
-      if(this.debug) {
-        this.game.debug.text("First Wave: (" + this.firstWave.x + ","+ this.firstWave.y+")", 10, 100);
+    var firstWave = this.waves.children[this.firstWaveIndex];
+    var lastWave  = this.waves.children[this.lastWaveIndex];
+
+    if((firstWave.world.x + firstWave.offsetX) < this.game.camera.x) {
+      newX = lastWave.x + this.WAVE_LENGTH;
+      firstWave.x = newX;
+      this.lastWaveIndex = this.firstWaveIndex;
+      if(this.firstWaveIndex+1 >= this.numWaves){
+        this.firstWaveIndex = 0;
+      } else {
+        this.firstWaveIndex++;
       }
-      newX = this.lastWave.x + this.WAVE_LENGTH;
-      this.firstWave.x = newX;
-      // Push firstWave to end of list
-      this.waves.remove(this.firstWave, false);
-      this.waves.add(this.firstWave);
-      this.setFirstLastWave();
+
+      //this.waves.sort('x'); // Sorts waves ascending by X
+      //this.setFirstLastWave();
     }
   },
 
   animateWaves: function(){
     this.count += 0.1;
 
-    this.shuffleLeftMostWave();
-
+    var i = 0;
     this.waves.forEach(function(currentWave){
-      var i = this.waves.getChildIndex(currentWave);
       var amp = 5;
       var x = i * 0.9 + this.count;
       var y = Math.sin(x) * amp;
@@ -126,6 +123,7 @@ Wave.Game.prototype = {
       if(this.debug) {
         this.game.debug.text("Wave["+i+"]: (" + currentWave.x + ","+ currentWave.y+")", 10, 11*i+20)
       }
+      i++;
     }, this);
   },
 
