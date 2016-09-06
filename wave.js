@@ -21,6 +21,7 @@ Wave.Game.prototype = {
     var x, y, wave;
     this.game.world.setBounds(0, 0, 3200, 600);
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
+    this.game.time.advancedTiming = true;
 
     this.waves = this.game.add.group();
     this.waves.x = -this.WAVE_LENGTH*2;
@@ -54,6 +55,10 @@ Wave.Game.prototype = {
     this.boat.body.velocity.x = 90; // Constantly move boat to the right
     this.game.debug.text("Camera "+this.game.camera.x, 0, 10);
 
+    this.fps();
+  fps: function(){
+    this.game.debug.text(this.game.time.fps+"fps", 750, 20);
+  },
     this.waves.forEach(function(currentWave){
       var i = this.waves.getChildIndex(currentWave);
       var amp = 5;
