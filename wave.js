@@ -9,12 +9,14 @@ Wave.Game.prototype = {
     this.waves = null;
     this.boat = null;
     this.lastWaveX = 0;
+    this.sky = null;
     this.WAVE_LENGTH = 160;
   },
 
   preload: function(){
     this.game.load.spritesheet('wave', 'wave.png', this.WAVE_LENGTH, this.WAVE_LENGTH);
     this.game.load.image('boat', 'boat.png');
+    this.game.load.image('sky', 'sky.png');
   },
 
   create: function(){
@@ -22,6 +24,10 @@ Wave.Game.prototype = {
     this.game.world.setBounds(0, 0, 3200, 600);
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.time.advancedTiming = true;
+
+    this.sky = this.game.add.image(0,0,'sky');
+    this.sky.fixedToCamera = true;
+    this.sky.scale.setTo(1.2,1.2);
 
     this.waves = this.game.add.group();
     this.waves.x = -this.WAVE_LENGTH*2;
