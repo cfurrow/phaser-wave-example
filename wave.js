@@ -51,14 +51,40 @@ Wave.Game.prototype = {
 
   update: function(){
     this.game.physics.arcade.collide(this.boat, this.waves);
-    this.count += 0.1;
     this.boat.body.velocity.x = 90; // Constantly move boat to the right
     this.game.debug.text("Camera "+this.game.camera.x, 0, 10);
 
+    this.animateWaves();
     this.fps();
+  },
+
   fps: function(){
     this.game.debug.text(this.game.time.fps+"fps", 750, 20);
   },
+
+  getLeftmostWave: function(){
+    var minX = this.game.camera.x; // TODO: get phaser min int or whatever
+    return this.waves.filter(function(child, index, children){
+      if((child.world.x + child.offsetX) < minX){
+        minX = child.x;
+        return true;
+      }
+      return false;
+    }, false);
+  },
+
+  animateWaves: function(){
+    this.count += 0.1;
+
+    var leftMostWave = this.getLeftmostWave().first;
+    // Look at left-most this.waves.children only!
+    // check if the current wave's right edge (in world coords) is less than the camera's left edge
+    if(leftMostWave) {
+      this.game.debug.text("LeftMost Wave: (" + leftMostWave.x + ","+ leftMostWave.y+")", 10, 100);
+      newX = this.lastWaveX+this.WAVE_LENGTH;
+      leftMostWave.x = this.lastWaveX = newX;
+    }
+
     this.waves.forEach(function(currentWave){
       var i = this.waves.getChildIndex(currentWave);
       var amp = 5;
@@ -68,12 +94,6 @@ Wave.Game.prototype = {
       currentWave.y = y;
 
       this.game.debug.text("Wave["+i+"]: (" + currentWave.x + ","+ currentWave.y+")", 10, 11*i+20)
-
-      // check if the current wave's right edge (in world coords) is less than the camera's left edge
-      if((currentWave.world.x + currentWave.offsetX) < this.game.camera.x) {
-        newX = this.lastWaveX+this.WAVE_LENGTH;
-        currentWave.x = this.lastWaveX = newX;
-      }
     }, this);
   },
 
