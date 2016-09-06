@@ -9,7 +9,7 @@
   <script type="text/javascript" src="wave.js"></script>
   <script type="text/javascript">
     window.onload = function(){
-      var game = new Phaser.Game(800, 600, Phaser.Canvas, '');
+      var game = new Phaser.Game(800, 600, Phaser.WEBGL, '');
 
       game.state.add('Game', Wave.Game);
       game.state.start('Game');
