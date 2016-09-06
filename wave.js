@@ -8,9 +8,13 @@ Wave.Game.prototype = {
     this.numWaves = 10;
     this.waves = null;
     this.boat = null;
-    this.lastWaveX = 0;
     this.sky = null;
+
+    this.firstWave = null;
+    this.lastWave = null;
+
     this.WAVE_LENGTH = 160;
+
     this.debug = false;
     this.debugKey = null;
     this.showBodies = false;
@@ -60,8 +64,8 @@ Wave.Game.prototype = {
       wave.body.setCircle(this.game.rnd.between(80,140));
       wave.body.offset.set(0, 50);
       wave.body.immovable = true;
-      this.lastWaveX = wave.x;
     }
+    this.setFirstLastWave();
 
     this.boat = this.game.add.sprite(0, 0, 'boat');
     this.game.physics.arcade.enable(this.boat);
@@ -87,30 +91,31 @@ Wave.Game.prototype = {
     }
   },
 
-  getLeftmostWave: function(){
-    var minX = this.game.camera.x; // TODO: get phaser min int or whatever
-    return this.waves.filter(function(child, index, children){
-      if((child.world.x + child.offsetX) < minX){
-        minX = child.x;
-        return true;
+  setFirstLastWave: function() {
+    this.firstWave = this.waves.children[0];
+    this.lastWave  = this.waves.children[this.numWaves-1];
+  },
+
+  shuffleLeftMostWave: function(){
+    // Look at left-most this.waves.children only!
+    // check if the current wave's right edge (in world coords) is less than the camera's left edge
+    if((this.firstWave.world.x + this.firstWave.offsetX) < this.game.camera.x) {
+      if(this.debug) {
+        this.game.debug.text("First Wave: (" + this.firstWave.x + ","+ this.firstWave.y+")", 10, 100);
       }
-      return false;
-    }, false);
+      newX = this.lastWave.x + this.WAVE_LENGTH;
+      this.firstWave.x = newX;
+      // Push firstWave to end of list
+      this.waves.remove(this.firstWave, false);
+      this.waves.add(this.firstWave);
+      this.setFirstLastWave();
+    }
   },
 
   animateWaves: function(){
     this.count += 0.1;
 
-    var leftMostWave = this.getLeftmostWave().first;
-    // Look at left-most this.waves.children only!
-    // check if the current wave's right edge (in world coords) is less than the camera's left edge
-    if(leftMostWave) {
-      if(this.debug) {
-        this.game.debug.text("LeftMost Wave: (" + leftMostWave.x + ","+ leftMostWave.y+")", 10, 100);
-      }
-      newX = this.lastWaveX+this.WAVE_LENGTH;
-      leftMostWave.x = this.lastWaveX = newX;
-    }
+    this.shuffleLeftMostWave();
 
     this.waves.forEach(function(currentWave){
       var i = this.waves.getChildIndex(currentWave);
