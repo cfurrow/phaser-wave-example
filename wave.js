@@ -86,9 +86,7 @@ Wave.Game.prototype = {
   },
 
   fps: function(){
-    if(this.debug) {
-      this.game.debug.text(this.game.time.fps+"fps", 750, 20);
-    }
+    this.game.debug.text(this.game.time.fps+"fps", 750, 20);
   },
 
   setFirstLastWave: function() {
