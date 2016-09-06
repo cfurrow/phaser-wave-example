@@ -11,6 +11,10 @@ Wave.Game.prototype = {
     this.lastWaveX = 0;
     this.sky = null;
     this.WAVE_LENGTH = 160;
+    this.debug = false;
+    this.debugKey = null;
+    this.showBodies = false;
+    this.bodyKey = null;
   },
 
   preload: function(){
@@ -24,6 +28,17 @@ Wave.Game.prototype = {
     this.game.world.setBounds(0, 0, 3200, 600);
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.time.advancedTiming = true;
+
+    this.debugKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+    this.debugKey.onUp.add(function(){
+      this.debug = !this.debug;
+      this.game.debug.reset();
+    }, this);
+    this.bodyKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    this.bodyKey.onUp.add(function(){
+      this.showBodies = !this.showBodies;
+      this.game.debug.reset();
+    }, this);
 
     this.sky = this.game.add.image(0,0,'sky');
     this.sky.fixedToCamera = true;
@@ -58,14 +73,18 @@ Wave.Game.prototype = {
   update: function(){
     this.game.physics.arcade.collide(this.boat, this.waves);
     this.boat.body.velocity.x = 90; // Constantly move boat to the right
-    this.game.debug.text("Camera "+this.game.camera.x, 0, 10);
+    if(this.debug) {
+      this.game.debug.text("Camera "+this.game.camera.x, 0, 10);
+    }
 
     this.animateWaves();
     this.fps();
   },
 
   fps: function(){
-    this.game.debug.text(this.game.time.fps+"fps", 750, 20);
+    if(this.debug) {
+      this.game.debug.text(this.game.time.fps+"fps", 750, 20);
+    }
   },
 
   getLeftmostWave: function(){
@@ -86,7 +105,9 @@ Wave.Game.prototype = {
     // Look at left-most this.waves.children only!
     // check if the current wave's right edge (in world coords) is less than the camera's left edge
     if(leftMostWave) {
-      this.game.debug.text("LeftMost Wave: (" + leftMostWave.x + ","+ leftMostWave.y+")", 10, 100);
+      if(this.debug) {
+        this.game.debug.text("LeftMost Wave: (" + leftMostWave.x + ","+ leftMostWave.y+")", 10, 100);
+      }
       newX = this.lastWaveX+this.WAVE_LENGTH;
       leftMostWave.x = this.lastWaveX = newX;
     }
@@ -99,14 +120,18 @@ Wave.Game.prototype = {
       var newX;
       currentWave.y = y;
 
-      this.game.debug.text("Wave["+i+"]: (" + currentWave.x + ","+ currentWave.y+")", 10, 11*i+20)
+      if(this.debug) {
+        this.game.debug.text("Wave["+i+"]: (" + currentWave.x + ","+ currentWave.y+")", 10, 11*i+20)
+      }
     }, this);
   },
 
   render: function(){
-    // this.game.debug.body(this.boat);
-    // for(var i = 0; i < this.numWaves; i++) {
-    //   this.game.debug.body(this.waves.children[i]);
-    // }
+    if(this.showBodies) {
+      this.game.debug.body(this.boat);
+      this.waves.forEach(function(wave){
+        this.game.debug.body(wave);
+      }, this);
+    }
   }
 };
