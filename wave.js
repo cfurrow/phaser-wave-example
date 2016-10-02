@@ -18,6 +18,8 @@ Wave.Game.prototype = {
     this.debugKey = null;
     this.showBodies = false;
     this.bodyKey = null;
+
+    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
   },
 
   preload: function(){
@@ -31,6 +33,7 @@ Wave.Game.prototype = {
     this.game.world.setBounds(0, 0, 10000, 600);
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.time.advancedTiming = true;
+    this.game.time.desiredFps = 30;
 
     this.debugKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
     this.debugKey.onUp.add(function(){
@@ -84,7 +87,8 @@ Wave.Game.prototype = {
   },
 
   fps: function(){
-    this.game.debug.text(this.game.time.fps+"fps", 750, 20);
+    this.game.debug.text(this.game.time.fps+"fps", this.game.camera.width-50, 20);
+    this.game.debug.text(this.game.time.suggestedFps+"fps", this.game.camera.width-50, 40);
   },
 
   // NOTE: this re-shuffle causes stutter. all waves rubber-band a bit on the Y axis when this is done.
