@@ -11,12 +11,14 @@ Wave.Game.prototype = {
     this.boat = null;
     this.sky = null;
 
+    window.waveAmp = 5;
+
     this.firstWaveIndex = 0;
     this.lastWaveIndex = this.numWaves-1;
 
-    this.debug = false;
+    this.debug = true;
     this.debugKey = null;
-    this.showBodies = false;
+    this.showBodies = true;
     this.bodyKey = null;
 
     this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -31,7 +33,7 @@ Wave.Game.prototype = {
   create: function(){
     var x, y, wave;
     this.game.world.setBounds(0, 0, 10000, 600);
-    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+    //this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.time.advancedTiming = true;
     this.game.time.desiredFps = 30;
 
@@ -49,12 +51,13 @@ Wave.Game.prototype = {
     this.sky = this.game.add.image(0,0,'sky');
     this.sky.fixedToCamera = true;
     this.sky.scale.setTo(1.2,1.2);
+    this.sky.smoothed=false;
 
     this.waves = this.game.add.group();
     this.waves.x = -this.WAVE_LENGTH*2;
     this.waves.y = this.game.world.height - 50;
-    this.waves.enableBody = true;
-    this.waves.physicsBodyType = Phaser.Physics.ARCADE;
+    //this.waves.enableBody = true;
+    //this.waves.physicsBodyType = Phaser.Physics.ARCADE;
 
     for (var i = 0; i < this.numWaves; i++)
     {
@@ -62,22 +65,26 @@ Wave.Game.prototype = {
       y = 0;
       wave = this.game.add.sprite(x, y, 'wave', this.game.rnd.between(0,1));
       wave.anchor.set(0.5,0.5);
+      wave.smoothed=false;
       this.waves.add(wave);
-      wave.body.setCircle(this.game.rnd.between(80,140));
-      wave.body.offset.set(0, 50);
-      wave.body.immovable = true;
+      // wave.body.setCircle(this.game.rnd.between(80,140));
+      // wave.body.offset.set(0, 50);
+      // wave.body.immovable = true;
     }
 
-    this.boat = this.game.add.sprite(0, 0, 'boat');
-    this.game.physics.arcade.enable(this.boat);
-    this.boat.body.gravity.y = 250;
-    this.boat.body.setCircle(32);
+    this.boat = this.game.add.sprite(0, this.game.world.height-150, 'boat');
+    this.boat.smoothed=false;
+    //this.game.physics.arcade.enable(this.boat);
+    //this.boat.body.gravity.y = 250;
+    //this.boat.body.setCircle(32);
     this.game.camera.follow(this.boat);
   },
 
   update: function() {
-    this.game.physics.arcade.collide(this.boat, this.waves);
-    this.boat.body.velocity.x = 90; // Constantly move boat to the right
+    //this.game.physics.arcade.collide(this.boat, this.waves);
+    //this.boat.body.velocity.x = 90; // Constantly move boat to the right
+    this.boat.x += 3;
+    this.boat.y = Math.sin(this.boat.x * 0.05) * window.waveAmp + 490;
     if(this.debug) {
       this.game.debug.text("Camera "+this.game.camera.x, 0, 10);
     }
@@ -118,14 +125,13 @@ Wave.Game.prototype = {
 
     var i = 0;
     this.waves.forEach(function(currentWave){
-      var amp = 5;
-      var x = i * 0.9 + this.count;
-      var y = Math.sin(x) * amp;
+      var x = i + this.count; //0.9 + this.count;
+      var y = Math.sin(x) * window.waveAmp;
       var newX;
       currentWave.y = y;
 
       if(this.debug) {
-        this.game.debug.text("Wave["+i+"]: (" + currentWave.x + ","+ currentWave.y+")", 10, 11*i+20)
+        this.game.debug.text("Wave["+i+"]: (" + currentWave.x + ","+ currentWave.y+")", 10, 11*i+20);
       }
       i++;
     }, this);
