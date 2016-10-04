@@ -107,9 +107,6 @@ Wave.Game.prototype = {
       } else {
         this.firstWaveIndex++;
       }
-
-      //this.waves.sort('x'); // Sorts waves ascending by X
-      //this.setFirstLastWave();
     }
   },
 
