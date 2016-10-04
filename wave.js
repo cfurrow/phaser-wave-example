@@ -19,20 +19,15 @@ Wave.Game.prototype = {
     this.showBodies = false;
     this.bodyKey = null;
 
-    //this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     this.game.stage.backgroundColor = '#fff';
   },
 
   preload: function(){
     this.game.load.spritesheet('wave', 'wave.png', this.WAVE_LENGTH, this.WAVE_LENGTH);
-    this.game.load.image('boat', 'boat.png');
-    this.game.load.image('sky', 'sky.png');
   },
 
   create: function(){
     var x, y, wave;
-    //this.game.world.setBounds(0, 0, 10000, 600);
-    this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.time.advancedTiming = true;
     this.game.time.desiredFps = 30;
 
@@ -46,10 +41,6 @@ Wave.Game.prototype = {
       this.showBodies = !this.showBodies;
       this.game.debug.reset();
     }, this);
-
-    // this.sky = this.game.add.image(0,0,'sky');
-    // this.sky.fixedToCamera = true;
-    // this.sky.scale.setTo(1.2,1.2);
 
     this.waves = this.game.add.group();
     this.waves.x = -this.WAVE_LENGTH*2;
@@ -68,47 +59,13 @@ Wave.Game.prototype = {
       wave.body.offset.set(0, 50);
       wave.body.immovable = true;
     }
-
-    // this.boat = this.game.add.sprite(0, 0, 'boat');
-    // this.game.physics.arcade.enable(this.boat);
-    // this.boat.body.gravity.y = 250;
-    // this.boat.body.setCircle(32);
-    // this.game.camera.follow(this.boat);
   },
 
   update: function() {
-    //this.game.physics.arcade.collide(this.boat, this.waves);
-    //this.boat.body.velocity.x = 90; // Constantly move boat to the right
     if(this.debug) {
       this.game.debug.text("Camera "+this.game.camera.x, 0, 10);
     }
     this.animateWaves();
-    //this.fps();
-    //this.shuffleLeftMostWave();
-  },
-
-  fps: function(){
-    this.game.debug.text(this.game.time.fps+"fps", this.game.camera.width-50, 20);
-    this.game.debug.text(this.game.time.suggestedFps+"fps", this.game.camera.width-50, 40);
-  },
-
-  // NOTE: this re-shuffle causes stutter. all waves rubber-band a bit on the Y axis when this is done.
-  shuffleLeftMostWave: function(){
-    // Look at left-most this.waves.children only!
-    // check if the current wave's right edge (in world coords) is less than the camera's left edge
-    var firstWave = this.waves.children[this.firstWaveIndex];
-    var lastWave  = this.waves.children[this.lastWaveIndex];
-
-    if((firstWave.world.x + firstWave.offsetX) < this.game.camera.x) {
-      newX = lastWave.x + this.WAVE_LENGTH;
-      firstWave.x = newX;
-      this.lastWaveIndex = this.firstWaveIndex;
-      if(this.firstWaveIndex+1 >= this.numWaves){
-        this.firstWaveIndex = 0;
-      } else {
-        this.firstWaveIndex++;
-      }
-    }
   },
 
   animateWaves: function(){
