@@ -19,7 +19,8 @@ Wave.Game.prototype = {
     this.showBodies = false;
     this.bodyKey = null;
 
-    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    //this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    this.game.stage.backgroundColor = '#fff';
   },
 
   preload: function(){
@@ -30,7 +31,7 @@ Wave.Game.prototype = {
 
   create: function(){
     var x, y, wave;
-    this.game.world.setBounds(0, 0, 10000, 600);
+    //this.game.world.setBounds(0, 0, 10000, 600);
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.time.advancedTiming = true;
     this.game.time.desiredFps = 30;
@@ -46,9 +47,9 @@ Wave.Game.prototype = {
       this.game.debug.reset();
     }, this);
 
-    this.sky = this.game.add.image(0,0,'sky');
-    this.sky.fixedToCamera = true;
-    this.sky.scale.setTo(1.2,1.2);
+    // this.sky = this.game.add.image(0,0,'sky');
+    // this.sky.fixedToCamera = true;
+    // this.sky.scale.setTo(1.2,1.2);
 
     this.waves = this.game.add.group();
     this.waves.x = -this.WAVE_LENGTH*2;
@@ -68,22 +69,22 @@ Wave.Game.prototype = {
       wave.body.immovable = true;
     }
 
-    this.boat = this.game.add.sprite(0, 0, 'boat');
-    this.game.physics.arcade.enable(this.boat);
-    this.boat.body.gravity.y = 250;
-    this.boat.body.setCircle(32);
-    this.game.camera.follow(this.boat);
+    // this.boat = this.game.add.sprite(0, 0, 'boat');
+    // this.game.physics.arcade.enable(this.boat);
+    // this.boat.body.gravity.y = 250;
+    // this.boat.body.setCircle(32);
+    // this.game.camera.follow(this.boat);
   },
 
   update: function() {
-    this.game.physics.arcade.collide(this.boat, this.waves);
-    this.boat.body.velocity.x = 90; // Constantly move boat to the right
+    //this.game.physics.arcade.collide(this.boat, this.waves);
+    //this.boat.body.velocity.x = 90; // Constantly move boat to the right
     if(this.debug) {
       this.game.debug.text("Camera "+this.game.camera.x, 0, 10);
     }
     this.animateWaves();
-    this.fps();
-    this.shuffleLeftMostWave();
+    //this.fps();
+    //this.shuffleLeftMostWave();
   },
 
   fps: function(){
@@ -122,7 +123,7 @@ Wave.Game.prototype = {
       currentWave.y = y;
 
       if(this.debug) {
-        this.game.debug.text("Wave["+i+"]: (" + currentWave.x + ","+ currentWave.y+")", 10, 11*i+20)
+        this.game.debug.text("Wave["+i+"]: (" + currentWave.x + ","+ currentWave.y+")", 10, 11*i+20);
       }
       i++;
     }, this);
